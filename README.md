@@ -12,8 +12,9 @@ Data should be put into the `data/` directory. You may use `text8` as an example
 ```
 mkdir data
 cd data
-wget http://mattmahoney.net/dc/enwik8.zip
-tar xzvf enwik8.zip
+wget http://mattmahoney.net/dc/text8.zip
+unzip text8.zip
+cd ..
 ```
 
 ### Model
