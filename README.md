@@ -1,5 +1,5 @@
 ## BPMI
-Code for the SGNS and LogitSGNS models from the paper [Binarized PMI Matrix: Bridging Word Embeddings and Hyperbolic Spaces](https://www.overleaf.com/read/tjnppdygcyxz)
+Code for the SGNS and LogitSGNS models from the paper [Binarized PMI Matrix: Bridging Word Embeddings and Hyperbolic Spaces](https://arxiv.org/abs/2002.12005)
 
 ### Requirements
 Code is written in Python 3.6 and requires Pytorch 1.3+. It also requires the following Python modules: `numpy`, `gensim`, `argparse`. You can install them via:
