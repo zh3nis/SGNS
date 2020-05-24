@@ -48,6 +48,11 @@ dataset = data.Word2vecDataset(my_data, args.window_size, args.neg_num)
 dataloader = torch.utils.data.DataLoader(
   dataset, batch_size=args.batch_size, collate_fn=dataset.collate)
 
+if args.valid != None:
+  valid_dataset = data.ValidDataset(my_data, args.valid, args.window_size, args.neg_num)
+  valid_dataloader = torch.utils.data.DataLoader(
+      valid_dataset, batch_size=args.batch_size, collate_fn=valid_dataset.collate)
+
 vocab_size = len(my_data.word2id)
 if args.model == 'sgns': 
   skip_gram_model = model.SkipGramModel(vocab_size, args.emsize)
@@ -64,13 +69,12 @@ if use_cuda: skip_gram_model.cuda()
 
 epoch_size = dataset.data_len // args.batch_size
 optimizer = torch.optim.Adam(skip_gram_model.parameters())
-#scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, len(dataloader))
 
 for epoch in range(args.epochs):
   last_time = time.time()
   last_words = 0
 
-  running_loss = 0.0
+  total_loss = 0.0
   
   for step, batch in enumerate(dataloader):
     pos_u = batch[0].to(device)
@@ -81,13 +85,12 @@ for epoch in range(args.epochs):
     loss = skip_gram_model.forward(pos_u, pos_v, neg_v)
     loss.backward()
     optimizer.step()
-    #scheduler.step()
 
-    running_loss = running_loss * 0.9 + loss.item() * 0.1
+    total_loss += loss.item()
 
     if step % (epoch_size // 10) == 10:
       print('%.2f' % (step * 1.0 / epoch_size), end=' ')
-      print('loss = %.3f' % running_loss, end=', ')
+      print('loss = %.3f' % (total_loss / (step + 1)), end=', ')
       now_time = time.time()
       now_words = step * args.batch_size
       wps = (now_words - last_words) / (now_time - last_time)
@@ -96,7 +99,7 @@ for epoch in range(args.epochs):
       last_words = now_words
 
   print("Epoch: " + str(epoch + 1), end=", ")
-  print("Loss = " + str(running_loss), end=", ")
+  print("Loss = " + str(total_loss / epoch_size), end=", ")
 
   skip_gram_model.save_embedding(my_data.id2word, os.path.join(args.save_dir, args.save_file))
   wv_from_text = KeyedVectors.load_word2vec_format(os.path.join(args.save_dir, args.save_file), binary=False)
@@ -104,3 +107,23 @@ for epoch in range(args.epochs):
   google = wv_from_text.evaluate_word_analogies(datapath('questions-words.txt'))
   print('WS353 = %.3f' % ws353[0][0], end=', ')
   print('Google = %.3f' % google[0])
+
+    
+if args.valid != None:
+  print('Computing validation loss ...')
+  
+  epoch_size = valid_dataset.data_len // args.batch_size
+  last_time = time.time()
+  last_words = 0
+  total_loss = 0.0
+  
+  for step, batch in enumerate(valid_dataloader):
+    pos_u = batch[0].to(device)
+    pos_v = batch[1].to(device)
+    neg_v = batch[2].to(device)
+
+    loss = skip_gram_model.forward(pos_u, pos_v, neg_v)
+
+    total_loss += loss.item()
+
+  print("Validation loss = " + str(total_loss / epoch_size))

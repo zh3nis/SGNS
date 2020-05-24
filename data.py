@@ -93,3 +93,32 @@ class Word2vecDataset(torch.utils.data.Dataset):
     all_neg_v = [neg_v for batch in batches for _, _, neg_v in batch]
 
     return torch.LongTensor(all_u), torch.LongTensor(all_v), torch.LongTensor(all_neg_v)
+
+
+class ValidDataset(torch.utils.data.Dataset):
+  def __init__(self, train_data, valid_file, window_size, neg_num):
+    self.train_data = train_data
+    self.window_size = window_size
+    self.neg_num = neg_num
+    words = open(valid_file, encoding="utf8").read().replace("\n", " ").split()
+    self.word_ids = [self.train_data.word2id[w] for w in words if
+                     w in self.train_data.word2id and 
+                     np.random.rand() < self.train_data.discards[self.train_data.word2id[w]]]
+    self.data_len = len(self.word_ids)
+    
+  def __len__(self):
+    return self.data_len
+
+  def __getitem__(self, idx):
+    boundary = np.random.randint(1, self.window_size + 1)
+    u = self.word_ids[idx]
+    return [(u, v, self.train_data.getNegatives(v, self.neg_num)) for v in 
+            self.word_ids[max(idx - boundary, 0) : idx] + self.word_ids[min(idx + 1, self.data_len) : min(idx + boundary + 1, self.data_len)]]
+
+  @staticmethod
+  def collate(batches):
+    all_u = [u for batch in batches for u, _, _ in batch]
+    all_v = [v for batch in batches for _, v, _ in batch]
+    all_neg_v = [neg_v for batch in batches for _, _, neg_v in batch]
+
+    return torch.LongTensor(all_u), torch.LongTensor(all_v), torch.LongTensor(all_neg_v)
