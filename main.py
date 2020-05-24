@@ -101,31 +101,28 @@ for epoch in range(args.epochs):
       last_words = now_words
 
   print("Epoch: " + str(epoch + 1), end=", ")
-  print("Loss = " + str(total_loss / epoch_size), end=", ")
+  print("Loss = %.3f" % (total_loss / epoch_size), end=", ")
 
+  # Compute validation loss
+  if args.valid != None:
+    valid_epoch_size = valid_dataset.data_len // args.batch_size
+    valid_total_loss = 0.0
+
+    for valid_step, valid_batch in enumerate(valid_dataloader):
+      pos_u = valid_batch[0].to(device)
+      pos_v = valid_batch[1].to(device)
+      neg_v = valid_batch[2].to(device)
+
+      with torch.no_grad():
+        valid_loss = skip_gram_model.forward(pos_u, pos_v, neg_v)
+
+      valid_total_loss += valid_loss.item()
+
+    print("Valid Loss = %.3f" % (valid_total_loss / valid_epoch_size), end=', ')
+    
   skip_gram_model.save_embedding(my_data.id2word, os.path.join(args.save_dir, args.save_file))
   wv_from_text = KeyedVectors.load_word2vec_format(os.path.join(args.save_dir, args.save_file), binary=False)
   ws353 = wv_from_text.evaluate_word_pairs(datapath('wordsim353.tsv'))
   google = wv_from_text.evaluate_word_analogies(datapath('questions-words.txt'))
   print('WS353 = %.3f' % ws353[0][0], end=', ')
   print('Google = %.3f' % google[0])
-
-    
-if args.valid != None:
-  print('Computing validation loss ...')
-  
-  epoch_size = valid_dataset.data_len // args.batch_size
-  last_time = time.time()
-  last_words = 0
-  total_loss = 0.0
-  
-  for step, batch in enumerate(valid_dataloader):
-    pos_u = batch[0].to(device)
-    pos_v = batch[1].to(device)
-    neg_v = batch[2].to(device)
-
-    loss = skip_gram_model.forward(pos_u, pos_v, neg_v)
-
-    total_loss += loss.item()
-
-  print("Validation loss = " + str(total_loss / epoch_size))
