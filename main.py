@@ -16,6 +16,8 @@ parser.add_argument('--model', type=str, default='sgns',
                     help='model to use: sgns=SGNS, lsgns=LogitSGNS')
 parser.add_argument('--data', type=str, default='data/text8',
                     help='location of the data corpus')
+parser.add_argument('--valid', type=str, default=None,
+                    help='location of the validation set')
 parser.add_argument('--save_dir', type=str, default='embeddings',
                     help='path to save the word vectors')
 parser.add_argument('--save_file', type=str, default='sgns',
