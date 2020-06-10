@@ -11,7 +11,8 @@ import model
 
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
 
-parser = argparse.ArgumentParser(description='PyTorch SGNS and LogitSGNS Models')
+parser = argparse.ArgumentParser(description='PyTorch SGNS and LogitSGNS Models',
+                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument('--model', type=str, default='sgns',
                     help='model to use: sgns=SGNS, lsgns=LogitSGNS')
 parser.add_argument('--data', type=str, default='data/text8',
