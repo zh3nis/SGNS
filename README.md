@@ -1,5 +1,5 @@
 ## SGNS
-Code for the SGNS and LogitSGNS models from the paper [Binarized PMI Matrix: Bridging Word Embeddings and Hyperbolic Spaces](https://arxiv.org/abs/2002.12005)
+Code for the SGNS and Nonsigmoid SGNS models from the paper [Squashed Shifted PMI Matrix: Bridging Word Embeddings and Hyperbolic Spaces](https://arxiv.org/abs/2002.12005)
 
 ### Requirements
 Code is written in Python 3.6 and requires Pytorch 1.3+. It also requires the following Python modules: `numpy`, `gensim`, `argparse`, `gdown`. You can install them via:
