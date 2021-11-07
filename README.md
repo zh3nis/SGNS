@@ -1,4 +1,4 @@
-## SGNS
+## SGNS Implementation in PyTorch
 Code for the SGNS and Nonsigmoid SGNS models from the paper [Squashed Shifted PMI Matrix: Bridging Word Embeddings and Hyperbolic Spaces](https://arxiv.org/abs/2002.12005)
 
 ### Requirements
