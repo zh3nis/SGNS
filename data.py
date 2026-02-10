@@ -92,7 +92,10 @@ class Word2vecDataset(torch.utils.data.Dataset):
     all_v = [v for batch in batches for _, v, _ in batch]
     all_neg_v = [neg_v for batch in batches for _, _, neg_v in batch]
 
-    return torch.LongTensor(all_u), torch.LongTensor(all_v), torch.LongTensor(all_neg_v)
+    all_u = np.asarray(all_u, dtype=np.int64)
+    all_v = np.asarray(all_v, dtype=np.int64)
+    all_neg_v = np.stack(all_neg_v).astype(np.int64, copy=False)
+    return torch.from_numpy(all_u), torch.from_numpy(all_v), torch.from_numpy(all_neg_v)
 
 
 class ValidDataset(torch.utils.data.Dataset):
@@ -121,4 +124,7 @@ class ValidDataset(torch.utils.data.Dataset):
     all_v = [v for batch in batches for _, v, _ in batch]
     all_neg_v = [neg_v for batch in batches for _, _, neg_v in batch]
 
-    return torch.LongTensor(all_u), torch.LongTensor(all_v), torch.LongTensor(all_neg_v)
+    all_u = np.asarray(all_u, dtype=np.int64)
+    all_v = np.asarray(all_v, dtype=np.int64)
+    all_neg_v = np.stack(all_neg_v).astype(np.int64, copy=False)
+    return torch.from_numpy(all_u), torch.from_numpy(all_v), torch.from_numpy(all_neg_v)

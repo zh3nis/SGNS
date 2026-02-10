@@ -1,9 +1,6 @@
 import argparse
 import time
 import torch
-import gensim
-from gensim.models import KeyedVectors
-from gensim.test.utils import datapath
 import os
 
 import data
@@ -11,10 +8,10 @@ import model
 
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
 
-parser = argparse.ArgumentParser(description='PyTorch SGNS and LogitSGNS Models',
+parser = argparse.ArgumentParser(description='PyTorch SGNS, LogitSGNS, and LDA-SGNS Models',
                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument('--model', type=str, default='sgns',
-                    help='model to use: sgns=SGNS, lsgns=LogitSGNS')
+                    help='model to use: sgns=SGNS, lsgns=LogitSGNS, lda=LDASkipGramModel')
 parser.add_argument('--data', type=str, default='data/text8',
                     help='location of the data corpus')
 parser.add_argument('--valid', type=str, default=None,
@@ -61,6 +58,8 @@ if args.model == 'sgns':
   skip_gram_model = model.SkipGramModel(vocab_size, args.emsize)
 elif args.model == 'lsgns': 
   skip_gram_model = model.LogitSGNSModel(vocab_size, args.emsize, args.epsilon)
+elif args.model == 'lda':
+  skip_gram_model = model.LDASkipGramModel(vocab_size, args.emsize)
 else: 
   print("No such model:", args.model)
   exit(1)
@@ -122,8 +121,4 @@ for epoch in range(args.epochs):
     print("Valid Loss = %.3f" % (valid_total_loss / valid_epoch_size), end=', ')
     
   skip_gram_model.save_embedding(my_data.id2word, os.path.join(args.save_dir, args.save_file))
-  wv_from_text = KeyedVectors.load_word2vec_format(os.path.join(args.save_dir, args.save_file), binary=False)
-  ws353 = wv_from_text.evaluate_word_pairs(datapath('wordsim353.tsv'))
-  google = wv_from_text.evaluate_word_analogies(datapath('questions-words.txt'))
-  print('WS353 = %.3f' % ws353[0][0], end=', ')
-  print('Google = %.3f' % google[0])
+  print('')

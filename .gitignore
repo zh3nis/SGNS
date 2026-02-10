@@ -1,0 +1,7 @@
+data/text8
+data/text8.zip
+embeddings/sgns
+embeddings/lda
+__pycache__/data.cpython-312.pyc
+__pycache__/model.cpython-312.pyc
+__pycache__/main.cpython-312.pyc
