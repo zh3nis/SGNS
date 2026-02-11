@@ -680,3 +680,5 @@ Vocabulary size: 71290
 Epoch: 1, Loss = 2.366, 
 0.00 loss = 2.200, wps = 41993
 0.10 loss = 2.155, wps = 43834
+0.20 loss = 2.146, wps = 43801
+0.30 loss = 2.129, wps = 46819
