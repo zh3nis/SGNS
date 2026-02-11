@@ -5,3 +5,8 @@ embeddings/lda
 __pycache__/data.cpython-312.pyc
 __pycache__/model.cpython-312.pyc
 __pycache__/main.cpython-312.pyc
+Logistic_Loss__SADM_.pdf
+.gitignore
+embeddings/lda2
+embeddings/dnll
+embeddings/lda3

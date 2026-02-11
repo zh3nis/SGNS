@@ -8,10 +8,10 @@ import model
 
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
 
-parser = argparse.ArgumentParser(description='PyTorch SGNS, LogitSGNS, and LDA-SGNS Models',
+parser = argparse.ArgumentParser(description='PyTorch SGNS, LogitSGNS, and LDA-based SGNS Models',
                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument('--model', type=str, default='sgns',
-                    help='model to use: sgns=SGNS, lsgns=LogitSGNS, lda=LDASkipGramModel')
+                    help='model to use: sgns=SGNS, lsgns=LogitSGNS, lda=LDASkipGramModel, lda_dnll=LDADNLLSkipGramModel')
 parser.add_argument('--data', type=str, default='data/text8',
                     help='location of the data corpus')
 parser.add_argument('--valid', type=str, default=None,
@@ -34,6 +34,8 @@ parser.add_argument('--min_count', type=int, default=5,
                     help='number of word occurrences for it to be included in the vocabulary')
 parser.add_argument('--epsilon', type=float, default=0.01,
                     help='epsilon to be used in the LogitSGNS model')
+parser.add_argument('--lambda_weight', type=float, default=1.0,
+                    help='lambda weight for DNLL penalty (used by lda_dnll)')
 parser.add_argument('--gpu', default='0',
                     help='GPU to use')
 
@@ -60,6 +62,8 @@ elif args.model == 'lsgns':
   skip_gram_model = model.LogitSGNSModel(vocab_size, args.emsize, args.epsilon)
 elif args.model == 'lda':
   skip_gram_model = model.LDASkipGramModel(vocab_size, args.emsize)
+elif args.model == 'lda_dnll':
+  skip_gram_model = model.LDADNLLSkipGramModel(vocab_size, args.emsize, args.lambda_weight)
 else: 
   print("No such model:", args.model)
   exit(1)
