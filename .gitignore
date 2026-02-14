@@ -10,4 +10,10 @@ Logistic_Loss__SADM_.pdf
 embeddings/lda2
 embeddings/dnll
 embeddings/lda3
-nohup.out
+embeddings/dnll2
+embeddings/lda1
+embeddings/lda4
+embeddings/dnll3
+embeddings/dnll4
+embeddings/lda0
+embeddings/random_gaussian

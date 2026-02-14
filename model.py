@@ -51,8 +51,11 @@ class LDASkipGramModel(torch.nn.Module):
     self.log_priors = torch.nn.Parameter(torch.zeros(vocab_size))
 
     initrange = 1.0 / self.emb_dimension
-    torch.nn.init.uniform_(self.u_embeddings.weight.data, -initrange, initrange)
-    torch.nn.init.constant_(self.v_embeddings.weight.data, 0)
+    std = 1.0 / np.sqrt(2 * self.emb_dimension)
+    torch.nn.init.normal_(self.u_embeddings.weight.data, mean=0.0, std=std)
+    #torch.nn.init.constant_(self.v_embeddings.weight.data, 0)
+    #torch.nn.init.uniform_(self.v_embeddings.weight.data, -initrange, initrange)
+    torch.nn.init.normal_(self.v_embeddings.weight.data, mean=0.0, std=std)
 
   def _lda_score(self, emb_u, emb_v, log_prior_u):
     # Identity covariance, equal priors: delta_k(x) = x^T mu_k - 0.5 ||mu_k||^2
@@ -99,9 +102,9 @@ class LDADNLLSkipGramModel(torch.nn.Module):
     self.v_embeddings = torch.nn.Embedding(vocab_size, emb_dimension)
     self.log_priors = torch.nn.Parameter(torch.zeros(vocab_size))
 
-    initrange = 1.0 / self.emb_dimension
-    torch.nn.init.uniform_(self.u_embeddings.weight.data, -initrange, initrange)
-    torch.nn.init.constant_(self.v_embeddings.weight.data, 0)
+    std = 1.0 / np.sqrt(2 * self.emb_dimension)
+    torch.nn.init.normal_(self.u_embeddings.weight.data, mean=0.0, std=std)
+    torch.nn.init.normal_(self.v_embeddings.weight.data, mean=0.0, std=std)
 
   def _lda_score(self, emb_u, emb_v, log_prior_u):
     linear = torch.sum(torch.mul(emb_u, emb_v), dim=1)
